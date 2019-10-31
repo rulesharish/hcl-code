@@ -20,5 +20,5 @@ public interface AccountsRepository {
   
   boolean verifySufficientBalance(String fromAccountID, BigDecimal amountToTransfer );
   
-  void verifyAccounts(String accountID);
+  boolean verifyAccounts(String accountID);
 }

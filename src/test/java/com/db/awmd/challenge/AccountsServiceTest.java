@@ -83,6 +83,24 @@ public class AccountsServiceTest {
     
     }
     
+    
+    @Test
+    public void transferBalance_FailsOnInvalidAccount() throws Exception {
+            
+      Transfer  tran = new Transfer("Id-4", "Id-2", new BigDecimal(300));
+      try
+      {
+      this.accountsService.InitiateTransfer(tran);
+      }
+      catch(InsufficiantBalanceException ibe)
+      {
+    	  assertThat(ibe.getMessage()).isEqualTo("Invalid Account specified... Transfer Trasaction cannot be completed");
+      }
+      
+
+    
+    }
+    
 
   }
   

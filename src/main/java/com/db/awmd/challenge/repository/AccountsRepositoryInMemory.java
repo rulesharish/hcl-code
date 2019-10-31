@@ -43,6 +43,11 @@ public class AccountsRepositoryInMemory implements AccountsRepository {
   
 @Override
 public void transferBalance(Transfer transaction) throws InsufficiantBalanceException, InvalidAccountException {
+	
+	// Getting lock on account to prevent unstable account details.
+	synchronized (accounts) {
+		
+	
 	String fromAccountID = transaction.getFromAccountId();
 	String toAccountID = transaction.getToAccountId();
 	BigDecimal amountToTransfer = transaction.getAmountToTransfer();
@@ -60,28 +65,34 @@ public void transferBalance(Transfer transaction) throws InsufficiantBalanceExce
 		notificationService.notifyAboutTransfer(fromAccount, "Request to transfer amount " + amountToTransfer + " to account " + toAccountID + " can not be compelted due to insuffcient balance.");
 	
 	updateAccountBalance(transaction);
+	}
 	
 	
 }
 
 @Override
-public void verifyAccounts(String accountID)
+/**
+ * Verify is specified account ID is valid or not.
+ */
+public boolean verifyAccounts(String accountID)
 {
 	Account fromAccount = getAccount(accountID);
 	if(fromAccount == null)
 		throw new InvalidAccountException("Invalid Account specified... Transfer Trasaction cannot be completed");
 	
+	return true;
 }
 
 @Override
+/**
+ * Checks if there is enough balance in account to complete a transaction.
+ */
 public boolean verifySufficientBalance(String fromAccountID, BigDecimal amountToTransfer )
 {
 	Account fromAccount = getAccount(fromAccountID);
 	
 	if(fromAccount.getBalance().compareTo(amountToTransfer) < 0)
 	
-		
-		
 		throw new InsufficiantBalanceException("Balance in account " + fromAccountID +" is not sufficient to complete transfer");
 	
 	return true;
@@ -89,6 +100,9 @@ public boolean verifySufficientBalance(String fromAccountID, BigDecimal amountTo
 
 
 @Override
+/**
+ * complete transfer and updates account balance in both accounts.
+ */
 public void updateAccountBalance(Transfer transaction)
 {
 	String fromAccountID = transaction.getFromAccountId();

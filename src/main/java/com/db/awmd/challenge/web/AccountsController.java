@@ -62,7 +62,7 @@ public class AccountsController {
     catch (InsufficiantBalanceException ibe) {
         return new ResponseEntity<>(ibe.getMessage(), HttpStatus.BAD_REQUEST);
       }
-
+    log.info("Completing  Transfer {}", transaction);
     return new ResponseEntity<>(HttpStatus.OK);
   }
   
